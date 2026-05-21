@@ -77,7 +77,9 @@ a:hover {
 #listado-tragos {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+    color: white;
 }
 
 .li-hamburguesa,

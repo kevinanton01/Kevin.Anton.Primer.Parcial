@@ -25,14 +25,83 @@ let tragos = [
     {'id': 18, 'nombre': 'Daiquiri', 'precio': 7000, 'descripcion': 'Vaso de Daiquiri.', 'img': '/assets/tragos/daiquiri.png'},
 ]
 
-function sumarAlCarrito() {
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
+function sumarAlCarrito(id) {
+    let todosLosProductos = [...hamburguesas,...bebidas,...tragos];
+    let productoEnCarrito = carrito.find(item => item.id === id);
+
+    if (productoEnCarrito){
+        productoEnCarrito.cantidad++;
+    }else{
+        let productoOriginal = todosLosProductos.find(producto => producto.id === id);
+    
+        carrito.push({...productoOriginal, cantidad: 1})
+    }
+
+    let prodAgregado = todosLosProductos.find(prod => prod.id === id);
+    alert(`${prodAgregado.nombre} fue agregado al carrito`);
+    console.log(carrito)
+    
+    localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
-function restarDelCarrito() {
+function restarDelCarrito(id) {
+    if(carrito.length === 0){
+        alert("No hay ningun producto");
+        return
+    }
+
+    let indice = carrito.findIndex(item => item.id === id);
+
+    if (indice === -1){
+        let todosLosProductos = [...hamburguesas,...bebidas,...tragos];
+        let productoOriginal = todosLosProductos.find(producto => producto.id === id);
+        alert("No esta en el carrito");
+        return;
+    }
+
+    let producto = carrito[indice];
+    producto.cantidad--;
+    alert(`${producto.nombre} fue eliminado del carrito`);
+
+    if (producto.cantidad === 0){
+        carrito.splice(indice, 1);
+    }
+
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+
+    console.log(carrito);
     
 }
 
+mostrarProductos(hamburguesas, "listado-hamburguesas");
+mostrarProductos(bebidas, "listado-bebidas");
+mostrarProductos(tragos, "listado-tragos");
+
+function mostrarProductos(productos, id){
+    const listaProductos = document.getElementById(id);
+    listaProductos.innerHTML = "";
+
+    productos.forEach(producto => {
+        listaProductos.innerHTML += `
+        <li class="li-producto">
+            <img class="img-producto" src=".${producto.img}">
+
+            <div>
+                <h3 class="nombre-producto">${producto.nombre}</h3>
+                <p class="precio-producto">${producto.precio}</p>
+                <p class="descripcion-producto">${producto.descripcion}</p>
+            </div>
+
+            <button class="btn-sumar-a-carrito" onclick="sumarAlCarrito(${producto.id})"> + </button>
+            <button class="btn-restar-a-carrito" onclick="restarDelCarrito(${producto.id})"> - </button>
+            
+        </li>
+        `;
+
+    });
+}
 
 
 
